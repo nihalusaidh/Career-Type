@@ -1,17 +1,14 @@
 "use client";
 
 import { useCallback, useRef, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { TypingEngine as Engine } from "@/lib/typing-engine";
 import { useTypingStore } from "@/store/typingStore";
 import { useStatsStore } from "@/store/statsStore";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useTimer } from "@/hooks/useTimer";
 import { useSound } from "@/hooks/useSound";
-import { StatsBar } from "./StatsBar";
-import { Results } from "./Results";
 import { KeyboardVisualizer } from "./KeyboardVisualizer";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { generateId } from "@/lib/utils";
 import type { TypingSession, TestType } from "@/types";
@@ -40,6 +37,7 @@ export function TypingEngine({ passage, careerId, subId, testType, duration, onN
   const timerActive = store.status === "active";
   const isFinished = store.status === "finished";
   const isIdle = store.status === "idle";
+  const isPaused = store.status === "paused";
 
   const saveSession = useCallback((result: any) => {
     const session: TypingSession = {
@@ -83,6 +81,12 @@ export function TypingEngine({ passage, careerId, subId, testType, duration, onN
     isActive: timerActive && (duration !== null),
   });
 
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
   const startTest = useCallback(() => {
     timeUpRef.current = false;
     passedTimeUpRef.current = false;
@@ -103,7 +107,7 @@ export function TypingEngine({ passage, careerId, subId, testType, duration, onN
     (char: string) => {
       if (store.status === "idle") {
         startTest();
-        return; // startTest will reset everything; next char will be handled normally
+        return;
       }
       if (store.status !== "active" || !engineRef.current || timeUpRef.current) return;
 
@@ -148,27 +152,35 @@ export function TypingEngine({ passage, careerId, subId, testType, duration, onN
     return Math.round((store.totalChars / 5) / elapsed);
   }
 
-  return (
-    <div className="flex flex-col gap-5">
-      {/* Stats Bar */}
-      <StatsBar
-        wpm={calculateCurrentWpm()}
-        accuracy={store.totalChars > 0 ? Math.round((store.correctChars / store.totalChars) * 100) : 100}
-        mistakes={store.mistakes}
-        totalChars={store.totalChars}
-        timeLeft={duration !== null ? timeLeft : null}
-        status={store.status}
-      />
+  const currentWpm = calculateCurrentWpm();
+  const currentAccuracy = store.totalChars > 0 ? Math.round((store.correctChars / store.totalChars) * 100) : 100;
 
-      {/* Typing Area */}
-      <motion.div layout className="relative">
+  const displayTime = duration !== null && timeLeft !== null
+    ? formatTime(timeLeft)
+    : duration !== null ? formatTime(duration) : "∞";
+
+  return (
+    <div className="flex flex-col items-center gap-5">
+      {/* Text Area */}
+      <div className="w-full relative">
         <div
           ref={containerRef}
           tabIndex={0}
           onClick={() => { if (containerRef.current) containerRef.current.focus(); }}
-          className="relative focus:outline-none cursor-text p-6 rounded-2xl border border-[var(--ct-border)] bg-[var(--ct-card)]/60 backdrop-blur-sm min-h-[120px]"
+          className="relative focus:outline-none cursor-text w-full p-5 rounded-xl border border-[var(--ct-border)] bg-[var(--ct-card)]/50 min-h-[140px]"
         >
-          <div className="relative font-mono text-xl leading-relaxed select-none">
+          {/* Timer bar inside text area */}
+          <div className="flex items-center justify-between mb-3 text-xs">
+            <span className="font-mono tabular-nums text-[var(--ct-text-secondary)]">
+              {displayTime}
+            </span>
+            <span className="text-[var(--ct-text-secondary)]">
+              {isIdle ? "" : `${currentWpm} wpm`}
+            </span>
+          </div>
+
+          {/* Passage text */}
+          <div className="font-mono text-lg leading-relaxed select-none break-words">
             {store.passage.split("").map((char, i) => {
               const typed = store.typedChars[i];
               let color = "var(--ct-sub)";
@@ -191,49 +203,108 @@ export function TypingEngine({ passage, careerId, subId, testType, duration, onN
               );
             })}
           </div>
-        </div>
-      </motion.div>
 
-      {/* Controls */}
-      <div className="flex items-center justify-center gap-3">
-        {isFinished ? (
-          <>
-            <Button onClick={startTest}>
-              <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Try Again
-            </Button>
-            <Button variant="secondary" onClick={onNewPassage}>
-              New Text
-            </Button>
-          </>
-        ) : isIdle ? (
-          <Button onClick={startTest} size="lg" className="px-10">
-            Start Typing
-          </Button>
-        ) : store.status === "paused" ? (
-          <Button onClick={() => store.setStatus("active")}>
-            Resume
-          </Button>
-        ) : (
-          <Button variant="secondary" onClick={() => store.setStatus("paused")}>
-            Pause
-          </Button>
-        )}
+          {/* Overlay for idle state */}
+          {isIdle && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[var(--ct-card)]/40 rounded-xl">
+              <p className="text-sm text-[var(--ct-text-secondary)]">
+                Click or press any key to start
+              </p>
+            </div>
+          )}
+
+          {/* Overlay for paused state */}
+          {isPaused && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[var(--ct-card)]/60 backdrop-blur-sm rounded-xl">
+              <div className="text-center">
+                <p className="text-lg font-semibold text-[var(--ct-text)] mb-3">Paused</p>
+                <Button onClick={() => store.setStatus("active")}>
+                  Resume
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Keyboard Visualizer */}
+      {/* Keyboard */}
       <KeyboardVisualizer pressedKey={pressedKey} />
 
-      {/* Inline Results */}
-      {isFinished && engineResult && (
-        <Results
-          result={engineResult}
-          onRestart={startTest}
-          onNewText={onNewPassage}
-        />
-      )}
+      {/* Stats below keyboard */}
+      <div className="flex items-center gap-4 text-xs text-[var(--ct-text-secondary)]">
+        <span className="font-mono tabular-nums">
+          wpm <span className="text-[var(--ct-text)] font-semibold">{isIdle ? "—" : currentWpm}</span>
+        </span>
+        <span className="text-[var(--ct-border)]">|</span>
+        <span className="font-mono tabular-nums">
+          acc <span className="text-[var(--ct-text)] font-semibold">{isIdle ? "—" : `${currentAccuracy}%`}</span>
+        </span>
+        <span className="text-[var(--ct-border)]">|</span>
+        <span className="font-mono tabular-nums">
+          mistakes <span className="text-[var(--ct-text)] font-semibold">{store.mistakes}</span>
+        </span>
+      </div>
+
+      {/* Controls / Results */}
+      <AnimatePresence mode="wait">
+        {isFinished && engineResult ? (
+          <motion.div
+            key="results"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="w-full max-w-md"
+          >
+            <div className="rounded-xl border border-[var(--ct-border)] bg-[var(--ct-card)]/50 p-5">
+              <div className="grid grid-cols-4 gap-3 mb-4">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-[var(--ct-text)] tabular-nums">{engineResult.wpm}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[var(--ct-text-secondary)]">wpm</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-[var(--ct-text)] tabular-nums">{engineResult.accuracy}%</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[var(--ct-text-secondary)]">accuracy</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-[var(--ct-text)] tabular-nums">{engineResult.mistakes}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[var(--ct-text-secondary)]">mistakes</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-[var(--ct-text)] tabular-nums">{engineResult.duration.toFixed(1)}s</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[var(--ct-text-secondary)]">time</div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={startTest} className="flex-1 text-sm py-2">
+                  Try Again
+                </Button>
+                <Button variant="secondary" onClick={onNewPassage} className="flex-1 text-sm py-2">
+                  New Text
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        ) : isPaused ? null : (
+          <motion.div
+            key="controls"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center gap-3"
+          >
+            {isIdle ? (
+              <span className="text-xs text-[var(--ct-text-secondary)]">Press any key</span>
+            ) : (
+              <button
+                onClick={() => store.setStatus("paused")}
+                className="px-4 py-1.5 text-xs font-medium rounded-lg border border-[var(--ct-border)] text-[var(--ct-text-secondary)] hover:text-[var(--ct-text)] hover:bg-[var(--ct-card)] transition-colors"
+              >
+                Pause
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

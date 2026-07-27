@@ -23,7 +23,7 @@ export function KeyboardVisualizer({ pressedKey }: KeyboardVisualizerProps) {
   }, [pressedKey]);
 
   return (
-    <div className="hidden sm:flex flex-col items-center gap-1 mt-3">
+    <div className="flex flex-col items-center gap-1">
       {keyRows.map((row, ri) => (
         <div key={ri} className="flex gap-1">
           {row.map((key) => {
@@ -31,10 +31,10 @@ export function KeyboardVisualizer({ pressedKey }: KeyboardVisualizerProps) {
             return (
               <div
                 key={key}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-mono transition-all duration-75 ${
+                className={`w-8 h-8 flex items-center justify-center rounded-md text-[10px] font-mono transition-all duration-75 ${
                   isActive
-                    ? "bg-[var(--ct-accent)] text-white scale-95 shadow-sm shadow-[var(--ct-accent)]/30"
-                    : "bg-[var(--ct-card)]/60 text-[var(--ct-text-secondary)] border border-[var(--ct-border)]"
+                    ? "bg-[var(--ct-accent)] text-white scale-95"
+                    : "bg-[var(--ct-card)]/50 text-[var(--ct-text-secondary)] border border-[var(--ct-border)]"
                 }`}
               >
                 {key}

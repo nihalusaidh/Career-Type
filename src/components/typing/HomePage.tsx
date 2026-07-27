@@ -7,7 +7,6 @@ import { careers } from "@/data/careers";
 import { getRandomPassage } from "@/content/index";
 import { getTimeFromTestType } from "@/lib/utils";
 import { TypingEngine } from "./TypingEngine";
-import { TestTypeSelector } from "./TestTypeSelector";
 import type { TestType } from "@/types";
 
 export function HomePage() {
@@ -57,92 +56,75 @@ export function HomePage() {
   }, [careerId, subId, passageKey]);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-3 pb-10">
-      {/* Toolbar */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6 p-4 rounded-2xl border border-[var(--ct-border)] bg-[var(--ct-card)]/80 backdrop-blur-sm"
-      >
-        {/* Career row */}
-        <div className="flex items-center gap-3 mb-3">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--ct-text-secondary)] min-w-[44px]">
-            Career
-          </span>
-          <div className="flex gap-1.5 flex-wrap">
-            {careers.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => handleCareerChange(c.id)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                  careerId === c.id
-                    ? "bg-[var(--ct-accent)] text-white shadow-sm shadow-[var(--ct-accent)]/30"
-                    : "text-[var(--ct-text-secondary)] hover:text-[var(--ct-text)] hover:bg-[var(--ct-bg)] border border-transparent"
-                }`}
-              >
-                {c.name}
-              </button>
-            ))}
-          </div>
+    <div className="mx-auto max-w-4xl px-4 pt-4">
+      {/* Controls bar */}
+      <div className="flex items-center gap-2 mb-5 flex-wrap">
+        <select
+          value={careerId}
+          onChange={(e) => handleCareerChange(e.target.value)}
+          className="bg-[var(--ct-bg)] text-[var(--ct-text)] border border-[var(--ct-border)] rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[var(--ct-accent)]"
+        >
+          {careers.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={subId}
+          onChange={(e) => handleSubChange(e.target.value)}
+          className="bg-[var(--ct-bg)] text-[var(--ct-text)] border border-[var(--ct-border)] rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[var(--ct-accent)]"
+        >
+          {subCategories.map((s) => (
+            <option key={s.id} value={s.id}>{s.name}</option>
+          ))}
+        </select>
+
+        <div className="w-px h-5 bg-[var(--ct-border)] mx-1" />
+
+        <div className="flex gap-0.5">
+          {[
+            { label: "30s", value: "30s" },
+            { label: "60s", value: "60s" },
+            { label: "120s", value: "120s" },
+            { label: "5m", value: "5min" },
+            { label: "10m", value: "10min" },
+            { label: "∞", value: "unlimited" },
+          ].map((t) => (
+            <button
+              key={t.value}
+              onClick={() => handleTestTypeChange(t.value as TestType)}
+              className={`px-2 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                testType === t.value
+                  ? "bg-[var(--ct-accent)] text-white"
+                  : "text-[var(--ct-text-secondary)] hover:text-[var(--ct-text)]"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        {/* Separator */}
-        <div className="h-px bg-[var(--ct-border)] mb-3" />
+        <div className="w-px h-5 bg-[var(--ct-border)] mx-1" />
 
-        {/* Topic row */}
-        {subCategories.length > 0 && (
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--ct-text-secondary)] min-w-[44px]">
-              Topic
-            </span>
-            <div className="flex gap-1.5 flex-wrap max-h-20 overflow-y-auto">
-              {subCategories.map((sub) => (
-                <button
-                  key={sub.id}
-                  onClick={() => handleSubChange(sub.id)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${
-                    subId === sub.id
-                      ? "bg-[var(--ct-accent)]/15 text-[var(--ct-accent)] border border-[var(--ct-accent)]/30"
-                      : "text-[var(--ct-text-secondary)] hover:text-[var(--ct-text)] border border-transparent"
-                  }`}
-                >
-                  {sub.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Separator */}
-        <div className="h-px bg-[var(--ct-border)] mb-3" />
-
-        {/* Time row */}
-        <div className="flex items-center gap-3">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--ct-text-secondary)] min-w-[44px]">
-            Time
-          </span>
-          <TestTypeSelector selected={testType} onSelect={handleTestTypeChange} />
-          <button
-            onClick={handleNewPassage}
-            className="ml-auto px-3 py-1.5 text-xs font-medium rounded-lg text-[var(--ct-text-secondary)] hover:text-[var(--ct-text)] hover:bg-[var(--ct-bg)] border border-transparent transition-all flex items-center gap-1.5"
-            title="New passage"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            New Text
-          </button>
-        </div>
-      </motion.div>
+        <button
+          onClick={handleNewPassage}
+          className="px-2.5 py-1.5 text-xs font-medium rounded-lg text-[var(--ct-text-secondary)] hover:text-[var(--ct-text)] hover:bg-[var(--ct-card)] transition-colors flex items-center gap-1"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          New
+        </button>
+      </div>
 
       {/* Typing Engine */}
       <AnimatePresence mode="wait">
         <motion.div
           key={`${careerId}-${subId}-${passageKey}`}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
         >
           {passage ? (
             <TypingEngine
