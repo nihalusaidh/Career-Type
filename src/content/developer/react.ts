@@ -1,0 +1,7 @@
+export const react: string[] = [
+  "function Counter() {\n    const [count, setCount] = useState(0);\n    return <button onClick={() => setCount(c => c + 1)}>{count}</button>;\n}",
+  "interface Props {\n    userId: string;\n    onError?: (err: Error) => void;\n}\n\nfunction UserProfile({ userId, onError }: Props) {\n    const [user, setUser] = useState<User | null>(null);\n    useEffect(() => {\n        fetch(`/api/users/${userId}`)\n            .then(res => res.json())\n            .then(setUser)\n            .catch(onError);\n    }, [userId]);\n    return user ? <div>{user.name}</div> : <Spinner />;\n}",
+  "const ThemeContext = createContext('light');\n\nfunction App() {\n    return (\n        <ThemeContext.Provider value=\"dark\">\n            <Toolbar />\n        </ThemeContext.Provider>\n    );\n}",
+  "function useLocalStorage<T>(key: string, initial: T): [T, (val: T) => void] {\n    const [value, setValue] = useState<T>(() => {\n        const stored = localStorage.getItem(key);\n        return stored ? JSON.parse(stored) : initial;\n    });\n    useEffect(() => localStorage.setItem(key, JSON.stringify(value)), [key, value]);\n    return [value, setValue];\n}",
+  "const TodoList = () => {\n    const [todos, setTodos] = useState<string[]>([]);\n    const addTodo = (text: string) => setTodos(prev => [...prev, text]);\n    return (\n        <ul>{todos.map((t, i) => <li key={i}>{t}</li>)}</ul>\n    );\n};",
+];

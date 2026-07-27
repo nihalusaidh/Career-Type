@@ -1,0 +1,7 @@
+export const gstNumbers: string[] = [
+  "22AAAAA0000A1Z5",
+  "27BMPPK1234F1Z8",
+  "29AAACB5678K1Z3",
+  "33DELPN9012H1Z7",
+  "09AXYPM3456R1Z4"
+];

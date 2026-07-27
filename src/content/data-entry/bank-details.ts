@@ -1,0 +1,7 @@
+export const bankDetails: string[] = [
+  "Account: 12345678901 | Routing: 021000021 | SWIFT: BOFAUS3N",
+  "Account: 9876543210 | IFSC: SBIN0001234 | MICR: 400002123",
+  "IBAN: GB29NWBK60161331926819 | SWIFT: NWBKGB2L",
+  "Account: 4455667788 | ABA: 122000247 | SWIFT: WFBIUS6S",
+  "Account: 9988776655 | IFSC: HDFC0004321 | Branch: Andheri East"
+];

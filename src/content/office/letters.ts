@@ -1,0 +1,7 @@
+export const letters: string[] = [
+  "Dear Hiring Manager,\n\nI am writing to apply for the Product Manager position at Vista Technologies. With 5 years of experience in SaaS product strategy and a track record of launching 3 successful platforms, I am confident I can contribute to your team.\n\nSincerely,\nEmily Tran",
+  "To Whom It May Concern,\n\nI am pleased to recommend Jessica Wong for the Senior Data Analyst role. She consistently delivered insightful analyses during her two years on my team and was instrumental in reducing customer churn by 15%.\n\nBest regards,\nDavid Kim",
+  "Dear Ms. Rodriguez,\n\nWe are excited to propose a partnership between BrightMedia and your organization. Our digital marketing solutions have helped similar firms achieve 40% ROI within six months. I look forward to discussing this further.\n\nWarmly,\nJames Okafor",
+  "Subject: Formal Complaint — Invoice #2291\n\nDear Billing Department,\n\nI am writing to dispute invoice #2291 dated March 3, which contains duplicate charges for the same service line item. Please review and issue a corrected invoice at your earliest convenience.\n\nRegards,\nLisa Park",
+  "Dear Scholarship Committee,\n\nI am honored to apply for the Future Leaders Fellowship. My background in public policy and community organizing has prepared me to drive meaningful change. Attached are my essays and letters of recommendation.\n\nThank you,\nCarlos Mendez",
+];
