@@ -3,5 +3,15 @@ export const techSupport: string[] = [
   "Please try restarting your router and modem. Unplug them for 30 seconds before plugging back in.",
   "Our dev team has confirmed this is a known bug in version 3.2. A fix will ship in the next patch.",
   "I have unlocked your account. Please attempt to log in again and update your security questions.",
-  "Clear your browser cache and cookies, then restart the browser before attempting to access the site."
+  "Clear your browser cache and cookies, then restart the browser before attempting to access the site.",
+  "To set up the VPN, download the configuration file from the portal and import it into your VPN client. Use your company credentials to authenticate and connect to the nearest server.",
+  "For email setup on Outlook, use IMAP settings: server mail.company.com on port 993 with SSL. Your SMTP server is smtp.company.com on port 587 with TLS authentication required.",
+  "Having trouble with your printer? First ensure it is powered on and connected to the same Wi-Fi network. Then go to Settings > Devices > Printers and click Add Printer.",
+  "The software crash you are experiencing is likely due to a memory leak in version 3.1. Please update to version 3.1.2 which includes a fix for this issue.",
+  "Please try a different browser to isolate the issue. If the site works in Chrome but not Firefox, clear Firefox cache and disable any ad-blocking extensions temporarily.",
+  "For network configuration, ensure your device has DHCP enabled. Release and renew your IP address by typing ipconfig /release then ipconfig /renew in the command prompt.",
+  "To pair your Bluetooth device, press and hold the pairing button for 5 seconds until the LED blinks. Then go to Bluetooth settings on your computer and select the device from the list.",
+  "The update failure may be due to insufficient disk space. Please free up at least 2 GB of space and try again. If the issue persists, download the update manually from our website.",
+  "To restore your backup, connect the external drive and open the backup software. Select Restore from Backup and choose the most recent backup file. This process may take 30-60 minutes.",
+  "For license activation, enter your product key exactly as shown in your purchase confirmation email. If activation fails, use the offline activation option and upload the generated file.",
 ];

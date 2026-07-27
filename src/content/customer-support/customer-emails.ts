@@ -3,5 +3,15 @@ export const customerEmails: string[] = [
   "Our return policy allows returns within 30 days of purchase with the original packaging and receipt.",
   "We value your feedback! Please take a moment to complete this short survey about your recent purchase.",
   "Per our records, your subscription will auto-renew on August 1, 2026. You can cancel anytime.",
-  "This email confirms that your shipping address has been updated to the details you provided."
+  "This email confirms that your shipping address has been updated to the details you provided.",
+  "Your order #ORD-8912 has been confirmed. We will send you a tracking number once the package ships from our warehouse. Estimated delivery: 5-7 business days.",
+  "Your package is on its way! Tracking number: 1Z999AA10123456784. Estimated delivery date: March 12. You can track your package in real-time using the link below.",
+  "We value your opinion! Please take 2 minutes to share your feedback about your recent support experience. Your responses help us improve our service quality.",
+  "Important Policy Update: As of April 1, our return window will be extended from 30 to 45 days. Free returns still apply. View the full updated policy on our website.",
+  "Account Notice: Your password was changed successfully. If you did not make this change, please contact support immediately to secure your account.",
+  "Exclusive Offer: As a valued customer, enjoy 20% off your next purchase with code THANKYOU20. Offer valid through the end of the month. Shop our latest collection now.",
+  "We would love to hear about your experience! Click the link to complete our 3-question satisfaction survey and be entered to win a $100 gift card.",
+  "Friendly reminder: Your annual subscription will renew on June 15. Your plan will be billed at $199/year. You can review or change your plan in your account settings.",
+  "Welcome back! Your account has been reactivated successfully. We have credited your account with 500 bonus points as a thank you for returning. Start exploring again.",
+  "Happy Birthday! As a special birthday treat, we have added a $15 credit to your account. Use it on anything in our store. No minimum purchase required. Enjoy your day!",
 ];

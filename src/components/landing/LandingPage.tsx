@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { careers } from "@/data/careers";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { TypingOverlay } from "@/components/typing/TypingOverlay";
 import { FAQ } from "./FAQ";
 
 const careerIcons: Record<string, React.ReactNode> = {
@@ -41,6 +43,9 @@ const careerIcons: Record<string, React.ReactNode> = {
 };
 
 export function LandingPage() {
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  const [selectedCareer, setSelectedCareer] = useState<string>("developer");
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -52,6 +57,11 @@ export function LandingPage() {
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
+  };
+
+  const openOverlay = (career?: string) => {
+    if (career) setSelectedCareer(career);
+    setOverlayOpen(true);
   };
 
   return (
@@ -83,20 +93,16 @@ export function LandingPage() {
             variants={itemVariants}
             className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/typing/developer">
-              <Button size="lg" className="w-full sm:w-auto">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Start Typing
-              </Button>
-            </Link>
-            <Link href="/#careers">
-              <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                Choose Career
-              </Button>
-            </Link>
+            <Button size="lg" onClick={() => openOverlay("developer")}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Start Typing
+            </Button>
+            <Button variant="secondary" size="lg" onClick={() => openOverlay()}>
+              Choose Career
+            </Button>
           </motion.div>
         </motion.div>
       </section>
@@ -126,27 +132,26 @@ export function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
+                onClick={() => openOverlay(career.id)}
               >
-                <Link href={`/typing/${career.id}`}>
-                  <Card className="h-full hover:border-[var(--ct-accent)]/50 transition-colors group cursor-pointer">
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-xl bg-[var(--ct-accent)]/10 text-[var(--ct-accent)]">
-                        {careerIcons[career.id]}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-[var(--ct-text)] group-hover:text-[var(--ct-accent)] transition-colors">
-                          {career.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-[var(--ct-text-secondary)]">
-                          {career.description}
-                        </p>
-                        <p className="mt-2 text-xs text-[var(--ct-text-secondary)]">
-                          {career.subCategories.length} categories
-                        </p>
-                      </div>
+                <Card className="h-full hover:border-[var(--ct-accent)]/50 transition-colors group cursor-pointer">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-xl bg-[var(--ct-accent)]/10 text-[var(--ct-accent)]">
+                      {careerIcons[career.id]}
                     </div>
-                  </Card>
-                </Link>
+                    <div>
+                      <h3 className="font-semibold text-[var(--ct-text)] group-hover:text-[var(--ct-accent)] transition-colors">
+                        {career.name}
+                      </h3>
+                      <p className="mt-1 text-sm text-[var(--ct-text-secondary)]">
+                        {career.description}
+                      </p>
+                      <p className="mt-2 text-xs text-[var(--ct-text-secondary)]">
+                        {career.subCategories.length} categories
+                      </p>
+                    </div>
+                  </div>
+                </Card>
               </motion.div>
             ))}
           </div>
@@ -209,6 +214,13 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Typing Overlay */}
+      <TypingOverlay
+        isOpen={overlayOpen}
+        onClose={() => setOverlayOpen(false)}
+        initialCareer={selectedCareer}
+      />
     </div>
   );
 }

@@ -3,5 +3,15 @@ export const complaints: string[] = [
   "Our quality team will investigate this matter thoroughly and get back to you within 48 hours.",
   "We have identified the issue and a replacement unit will be shipped to you at no additional cost.",
   "As compensation for the trouble, we are issuing a full refund along with a 20% discount code.",
-  "I am following up on your complaint from last week. Has the replacement unit arrived satisfactorily?"
+  "I am following up on your complaint from last week. Has the replacement unit arrived satisfactorily?",
+  "We are sorry for the poor service you experienced. Our staff has been retrained on proper customer interaction protocols to ensure this does not happen again.",
+  "The product you received appears to have a manufacturing defect. We are issuing a return label and will ship a replacement unit once the defective item is scanned by the carrier.",
+  "I reviewed your billing statement and found the overcharge of $34.50. The difference has been refunded to your original payment method and should reflect within 3 business days.",
+  "We sincerely apologize for the late delivery of your order. The package was delayed at the sorting facility due to a labeling error. We have expedited a replacement at no charge.",
+  "I am sorry to hear that one of our agents was rude during your call. We take this very seriously and have addressed the matter with the agent. You will receive a follow-up call from our manager.",
+  "It appears you received the wrong item in your package. Please keep the incorrect item and we will ship the correct SKU immediately with overnight delivery at no cost to you.",
+  "We are sorry the product quality did not meet your expectations. We have flagged this batch for inspection. As a gesture of goodwill, we are offering a 30% discount on your next order.",
+  "Your warranty claim has been registered. Since the product is within the 2-year warranty period, we will repair it free of charge. Please ship the item to our service center using the prepaid label.",
+  "We apologize for the noise disturbance caused by our equipment. Our technician will visit your premises on Tuesday to inspect and service the unit to reduce operational noise levels.",
+  "We take your privacy concern very seriously. We have reviewed our data handling procedures and have removed your information from any non-essential systems. A full report will be emailed to you.",
 ];

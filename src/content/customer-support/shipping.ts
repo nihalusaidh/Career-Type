@@ -3,5 +3,15 @@ export const shipping: string[] = [
   "We apologize for the delay. Severe weather has impacted shipping routes in the Midwest region.",
   "Your order has been delivered and signed for at the front desk on July 15, 2026 at 2:34 PM.",
   "I have submitted an address change request. Please allow 24 hours for the update to reflect.",
-  "The estimated delivery window is between Tuesday and Thursday of next week via standard ground."
+  "The estimated delivery window is between Tuesday and Thursday of next week via standard ground.",
+  "We have submitted an address correction request to the carrier. Your package will be rerouted to 123 Maple Street, Apt 4B. Please allow 24 hours for the update to reflect in tracking.",
+  "Your shipment is delayed due to a carrier network disruption in the Midwest. The new estimated delivery date is March 15. We are monitoring the situation closely.",
+  "Your package is being held at customs for inspection. Please provide the commercial invoice and HS code to expedite release. Additional duties of $45.00 may apply.",
+  "We regret to inform you that your package has been declared lost by the carrier. We have initiated a claim and will ship a replacement order with overnight delivery at no cost.",
+  "Your package arrived with visible damage. We have filed a damage claim with the carrier. Please keep the box and contents for inspection. A replacement will ship today.",
+  "This shipment requires a signature upon delivery. Please ensure someone is available at the shipping address during business hours. You can redirect to a pickup location if preferred.",
+  "Your package has been rerouted to your requested alternate address. The new delivery address is confirmed and tracking has been updated accordingly.",
+  "We have rescheduled your delivery to March 20 as requested. The time slot will be between 9 AM and 12 PM. A confirmation SMS will be sent the day before.",
+  "For international shipments, please note that customs clearance may take 3-7 business days. Duties and taxes are the responsibility of the recipient. Tracking works across borders.",
+  "You can track your package using the tracking number 1Z999AA10123456784. Real-time updates are available on our website and through our mobile app. Estimated delivery: March 10.",
 ];

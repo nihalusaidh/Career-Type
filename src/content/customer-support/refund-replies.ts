@@ -3,5 +3,15 @@ export const refundReplies: string[] = [
   "Your refund of $49.99 has been processed and will appear in your account within 5-7 business days.",
   "We are pleased to inform you that your refund request has been approved. The amount will be credited soon.",
   "After careful review, we are unable to process a refund as the item was purchased over 60 days ago.",
-  "I understand your frustration. As a one-time courtesy, we are offering store credit of $25.00."
+  "I understand your frustration. As a one-time courtesy, we are offering store credit of $25.00.",
+  "We can process a partial refund of $35.00 for the accessories that did not meet expectations. The main item cost is non-refundable as it has been used.",
+  "Your full refund of $129.99 has been approved. The amount will be credited back to your Visa card ending in 4321 within 5-7 business days.",
+  "We can process an exchange for the incorrect size. Please return the item using the prepaid label and we will ship the correct size once the return is scanned.",
+  "We have issued store credit for $45.00 to your account. This credit never expires and can be used on any item in our online store.",
+  "After careful review, your refund request has been denied. The item was purchased 8 months ago, which exceeds our 90-day return window.",
+  "Your refund is currently delayed due to a bank processing issue. We have resubmitted the payment and it should clear within 3 additional business days.",
+  "The refund amount you received was $29.99, but the correct amount should be $39.99. I have initiated a correction for the remaining $10.00 difference.",
+  "We have adjusted the promotional discount as requested. Since the promo code was not applied at checkout, we have refunded the difference of $12.50 to your account.",
+  "Your tax refund of $8.40 has been processed. Since the tax was incorrectly calculated on your order, we have issued a separate refund for the overpaid tax amount.",
+  "Your subscription refund has been processed on a prorated basis. Since you used 12 of 30 days, $18.00 has been refunded and your access will remain active until the end of the billing cycle.",
 ];

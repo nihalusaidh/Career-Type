@@ -3,5 +3,15 @@ export const tickets: string[] = [
   "Your issue has been categorized as Billing > Incorrect Charge and assigned to the finance team.",
   "Update on ticket #TKT-8921: Our team is currently investigating the duplicate charge on your account.",
   "Resolution notes: The duplicate charge has been reversed. Refund ID: RFD-4421 reflected in 3-5 days.",
-  "This ticket is now resolved. If you experience further issues, please reply to reopen the ticket."
+  "This ticket is now resolved. If you experience further issues, please reply to reopen the ticket.",
+  "High Priority Outage — Ticket #TKT-9102\n\nSeverity: P0\nImpact: All users unable to access the platform.\nStatus: Engineering team engaged. ETA for resolution: 2 hours. Updates every 30 minutes.",
+  "Feature Request — Ticket #TKT-9103\n\nRequest: Add bulk CSV export for transaction history.\nPriority: Medium\nUse case: Accounting team needs to reconcile monthly statements.\nStatus: Added to product backlog for Q3 review.",
+  "Bug Report — Ticket #TKT-9104\n\nDescription: Login button unresponsive on iOS Safari.\nSteps to reproduce: Open site on iPhone, tap Login.\nExpected: Redirect to login page.\nActual: No action. Happens on iOS 17+ only.",
+  "Account Escalation — Ticket #TKT-9105\n\nIssue: Admin account locked after password change.\nImpact: Cannot manage team permissions.\nAction: Account manually unlocked. Verified MFA reset.\nStatus: Resolved. User advised to create new app password.",
+  "Billing Dispute — Ticket #TKT-9106\n\nIssue: Charged twice for the same invoice #INV-3321.\nAmount disputed: $249.00\nAction: Duplicate charge identified. Refund initiated.\nStatus: Refund ID RFD-4422 issued. ETA: 5-7 business days.",
+  "Access Request — Ticket #TKT-9107\n\nRequest: Grant read-only access to Analytics dashboard for contractor.\nApprover: Department head notified.\nStatus: Access provisioned. Expires in 30 days. User notified via email.",
+  "Data Export — Ticket #TKT-9108\n\nRequest: Export all customer transaction data for 2024.\nFormat: CSV\nSize estimate: 500 MB\nStatus: Export job queued. Download link will be sent within 24 hours.",
+  "Integration Help — Ticket #TKT-9109\n\nNeed assistance connecting our CRM with your API.\nEnvironment: Salesforce\nAuthentication: OAuth 2.0\nStatus: Integration guide sent. Developer call scheduled for tomorrow at 2 PM.",
+  "Migration Support — Ticket #TKT-9110\n\nMigrating 15,000 user records from legacy system.\nTimeline: 2 weeks\nStatus: Schema mapping completed. Pilot migration scheduled for this weekend with 500 test records.",
+  "Security Report — Ticket #TKT-9111\n\nType: Phishing attempt reported\nDetails: Suspicious email claiming to be from support.\nAction: Domain blacklisted. Advisory sent to all users.\nStatus: Investigation complete. No accounts compromised.",
 ];

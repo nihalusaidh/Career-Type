@@ -3,5 +3,15 @@ export const liveChat: string[] = [
   "I can see your order #38492 is currently in transit. Let me check the exact location for you.",
   "Let me transfer you to our billing department who can assist with the payment issue.",
   "I have escalated your case to our senior team. You will receive an email within 2 hours.",
-  "Thanks for chatting with us today! Please click the close button to end this conversation."
+  "Thanks for chatting with us today! Please click the close button to end this conversation.",
+  "Hello and welcome! You are now connected with Sofia. How can I assist you with your account or order today?",
+  "For security purposes, could you please confirm your full name and the email address associated with your account?",
+  "Let us try clearing your browser cache. Go to Settings > Privacy > Clear Browsing Data and select Cached Images. Then restart your browser.",
+  "I can help you reset your password. Please check your email inbox for a password reset link and follow the instructions provided.",
+  "Your account has been locked due to multiple failed login attempts. I will unlock it now. Please try to log in again within the next 10 minutes.",
+  "I see a pending charge on your account. Let me check with our billing team. Could you please hold for 2 minutes while I look into this?",
+  "I understand you want to cancel your subscription. Before I proceed, let me check if you are eligible for any cancellation discounts or promotions.",
+  "I am escalating your issue to our technical team. They will review your case and reach out to you via email within the next 4 hours.",
+  "Thank you for your feedback! I have noted your suggestions and shared them with our product team for future consideration.",
+  "Before you go, is there anything else I can help you with? If not, thank you for reaching out and have a great day!",
 ];
