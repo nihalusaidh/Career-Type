@@ -10,6 +10,8 @@ import { Heatmap } from "@/components/stats/Heatmap";
 import { WeakKeys } from "@/components/stats/WeakKeys";
 import { ErrorDistribution } from "@/components/stats/ErrorDistribution";
 import { DailyPracticeChart } from "@/components/stats/DailyPracticeChart";
+import { CareerProgress } from "@/components/stats/CareerProgress";
+import { WeaknessGuide } from "@/components/stats/WeaknessGuide";
 import { formatDuration, getAverageWpm, getConsistency } from "./utils";
 
 export function StatsPageClient() {
@@ -121,6 +123,18 @@ export function StatsPageClient() {
               <CareerBreakdown sessions={stats.sessions} />
             </Card>
           </div>
+
+          {/* Career Progress */}
+          <Card className="mb-4">
+            <h2 className="font-semibold text-[var(--ct-text)] mb-3 text-sm">Career Progress &amp; Skill Tiers</h2>
+            <CareerProgress sessions={stats.sessions} />
+          </Card>
+
+          {/* Weakness Guide */}
+          <Card className="mb-4">
+            <h2 className="font-semibold text-[var(--ct-text)] mb-3 text-sm">Personalized Practice Guide</h2>
+            <WeaknessGuide sessions={stats.sessions} />
+          </Card>
 
           {/* Recent Sessions */}
           <Card>

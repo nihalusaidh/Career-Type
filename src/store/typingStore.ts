@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { TypingState, TestType, TypedChar, CharSnapshot } from "@/types";
+import type { TypingState, TestType, WpmSnapshot } from "@/types";
 
 interface TypingStoreState extends TypingState {
   passage: string;
@@ -22,6 +22,9 @@ interface TypingStoreState extends TypingState {
   reset: () => void;
   incrementCountdown: () => void;
   setCountdownValue: (val: number) => void;
+  pushWpmSnapshot: (wpm: number) => void;
+  toggleFocusMode: () => void;
+  setMode: (mode: TypingState["mode"]) => void;
 }
 
 const initialState: TypingState = {
@@ -35,6 +38,9 @@ const initialState: TypingState = {
   incorrectChars: 0,
   totalChars: 0,
   charHistory: [],
+  wpmHistory: [],
+  mode: "career",
+  focusMode: false,
 };
 
 export const useTypingStore = create<TypingStoreState>((set) => ({
@@ -90,6 +96,16 @@ export const useTypingStore = create<TypingStoreState>((set) => ({
     set((state) => ({ countdownValue: state.countdownValue - 1 })),
 
   setCountdownValue: (val) => set({ countdownValue: val }),
+
+  pushWpmSnapshot: (wpm) =>
+    set((state) => ({
+      wpmHistory: [...state.wpmHistory, { time: Date.now(), wpm }],
+    })),
+
+  toggleFocusMode: () =>
+    set((state) => ({ focusMode: !state.focusMode })),
+
+  setMode: (mode) => set({ mode }),
 
   reset: () =>
     set({

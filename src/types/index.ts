@@ -44,6 +44,13 @@ export type TestType =
   | "30s" | "60s" | "120s" | "5min" | "10min"
   | "unlimited" | "custom-time" | "custom-paragraph" | "random-paragraph" | "career-paragraph";
 
+export type TypingMode = "career" | "words" | "quotes" | "custom";
+
+export interface WpmSnapshot {
+  time: number;
+  wpm: number;
+}
+
 export interface TypingState {
   status: "idle" | "countdown" | "active" | "paused" | "finished";
   currentCharIndex: number;
@@ -55,6 +62,9 @@ export interface TypingState {
   incorrectChars: number;
   totalChars: number;
   charHistory: CharSnapshot[];
+  wpmHistory: WpmSnapshot[];
+  mode: TypingMode;
+  focusMode: boolean;
 }
 
 export interface TypedChar {
