@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useTypingStore } from "@/store/typingStore";
 import { TypingEngine } from "@/components/typing/TypingEngine";
 import { TestTypeSelector } from "@/components/typing/TestTypeSelector";
 import { SubCategorySelector } from "@/components/typing/SubCategorySelector";
 import { careers } from "@/data/careers";
 import { getRandomPassage } from "@/content/index";
+import { getTimeFromTestType } from "@/lib/utils";
 import type { TestType } from "@/types";
 
 export function TypingPageClient({ careerId }: { careerId: string }) {
@@ -16,12 +17,24 @@ export function TypingPageClient({ careerId }: { careerId: string }) {
   const [selectedSub, setSelectedSub] = useState(
     career?.subCategories[0]?.id ?? ""
   );
-
+  const [testType, setTestType] = useState<TestType>(store.testType);
   const [passageKey, setPassageKey] = useState(0);
+
+  const handleSubChange = useCallback((sub: string) => {
+    setSelectedSub(sub);
+    store.setSubCategory(sub);
+    setPassageKey((k) => k + 1);
+  }, [store]);
+
+  const handleNewPassage = useCallback(() => {
+    setPassageKey((k) => k + 1);
+  }, []);
 
   const passage = useMemo(() => {
     return getRandomPassage(careerId, selectedSub);
   }, [careerId, selectedSub, passageKey]);
+
+  const duration = getTimeFromTestType(testType, undefined);
 
   if (!career) {
     return (
@@ -46,19 +59,26 @@ export function TypingPageClient({ careerId }: { careerId: string }) {
         <SubCategorySelector
           careerId={careerId}
           selectedSub={selectedSub}
-          onSelect={(sub) => {
-            setSelectedSub(sub);
-            store.setSubCategory(sub);
-            setPassageKey((k) => k + 1);
-          }}
+          onSelect={handleSubChange}
         />
         <TestTypeSelector
-          selected={store.testType}
-          onSelect={(type) => store.setTestType(type)}
+          selected={testType}
+          onSelect={(type) => {
+            setTestType(type);
+            store.setTestType(type);
+          }}
         />
       </div>
 
-      <TypingEngine key={`${selectedSub}-${passageKey}`} passage={passage} />
+      <TypingEngine
+        key={`${selectedSub}-${passageKey}`}
+        passage={passage}
+        careerId={careerId}
+        subId={selectedSub}
+        testType={testType}
+        duration={duration}
+        onNewPassage={handleNewPassage}
+      />
     </div>
   );
 }

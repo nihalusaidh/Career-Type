@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { TypingEngine as Engine } from "@/lib/typing-engine";
 import { useTypingStore } from "@/store/typingStore";
 import { useStatsStore } from "@/store/statsStore";
@@ -9,35 +9,64 @@ import { useKeyboard } from "@/hooks/useKeyboard";
 import { useTimer } from "@/hooks/useTimer";
 import { useSound } from "@/hooks/useSound";
 import { StatsBar } from "./StatsBar";
-import { Timer } from "./Timer";
 import { Results } from "./Results";
 import { KeyboardVisualizer } from "./KeyboardVisualizer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { getTimeFromTestType, generateId } from "@/lib/utils";
-import type { TypingSession, CharSnapshot } from "@/types";
+import { generateId } from "@/lib/utils";
+import type { TypingSession, TestType } from "@/types";
 
 interface TypingEngineProps {
   passage: string;
+  careerId: string;
+  subId: string;
+  testType: TestType;
+  duration: number | null;
+  onNewPassage: () => void;
 }
 
-export function TypingEngine({ passage }: TypingEngineProps) {
+export function TypingEngine({ passage, careerId, subId, testType, duration, onNewPassage }: TypingEngineProps) {
   const store = useTypingStore();
   const { addSession } = useStatsStore();
   const { playKeySound } = useSound();
 
   const engineRef = useRef<Engine | null>(null);
   const [engineResult, setEngineResult] = useState<any>(null);
-  const [isFocused, setIsFocused] = useState(false);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const duration = getTimeFromTestType(store.testType, store.testDuration ?? undefined);
+  const timeUpRef = useRef(false);
+  const passedTimeUpRef = useRef(false);
 
   const timerActive = store.status === "active";
-  const timeUpRef = useRef(false);
+  const isFinished = store.status === "finished";
+  const isIdle = store.status === "idle";
+
+  const saveSession = useCallback((result: any) => {
+    const session: TypingSession = {
+      id: generateId(),
+      career: careerId,
+      subCategory: subId,
+      testType,
+      testDuration: duration ?? 0,
+      wpm: result.wpm,
+      rawWpm: result.rawWpm,
+      accuracy: result.accuracy,
+      mistakes: result.mistakes,
+      correctChars: result.correctChars,
+      incorrectChars: result.incorrectChars,
+      totalChars: result.totalChars,
+      wordsTyped: result.wordsTyped,
+      duration: result.duration,
+      completed: result.completed,
+      timestamp: Date.now(),
+      charHistory: result.charHistory,
+    };
+    addSession(session);
+  }, [careerId, subId, testType, duration, addSession]);
 
   const onTimeUp = useCallback(() => {
+    if (passedTimeUpRef.current) return;
+    passedTimeUpRef.current = true;
     timeUpRef.current = true;
     if (engineRef.current) {
       engineRef.current.finish();
@@ -46,7 +75,7 @@ export function TypingEngine({ passage }: TypingEngineProps) {
       store.setStatus("finished");
       saveSession(result);
     }
-  }, []);
+  }, [store, saveSession]);
 
   const { timeLeft } = useTimer({
     duration: duration ?? null,
@@ -56,34 +85,33 @@ export function TypingEngine({ passage }: TypingEngineProps) {
 
   const startTest = useCallback(() => {
     timeUpRef.current = false;
-    const p = passage || "Start typing to begin your practice session...";
-    engineRef.current = new Engine(p);
+    passedTimeUpRef.current = false;
+    engineRef.current = new Engine(passage);
     store.reset();
-    store.setPassage(p);
+    store.setPassage(passage);
     store.setStatus("active");
     const now = Date.now();
     store.setStartTime(now);
     engineRef.current.start();
     setEngineResult(null);
-    setIsFocused(true);
+    if (containerRef.current) {
+      containerRef.current.focus();
+    }
   }, [passage, store]);
 
   const handleChar = useCallback(
     (char: string) => {
       if (store.status === "idle") {
         startTest();
+        return; // startTest will reset everything; next char will be handled normally
       }
-      if (store.status !== "active" || !engineRef.current) return;
+      if (store.status !== "active" || !engineRef.current || timeUpRef.current) return;
 
       const result = engineRef.current.handleChar(char);
-      store.setChar(
-        result.charSnapshot.char,
-        result.charSnapshot.char,
-        result.correct,
-        Date.now()
-      );
+      store.setChar(result.charSnapshot.char, result.charSnapshot.char, result.correct, Date.now());
 
       if (result.finished) {
+        engineRef.current.finish();
         const finalResult = engineRef.current.getResult();
         setEngineResult(finalResult);
         store.setStatus("finished");
@@ -91,7 +119,7 @@ export function TypingEngine({ passage }: TypingEngineProps) {
         saveSession(finalResult);
       }
     },
-    [store.status, store, startTest]
+    [store, startTest, saveSession]
   );
 
   const handleBackspace = useCallback(() => {
@@ -113,33 +141,18 @@ export function TypingEngine({ passage }: TypingEngineProps) {
     }
   }, [store.status]);
 
-  function saveSession(result: any) {
-    const session: TypingSession = {
-      id: generateId(),
-      career: store.career,
-      subCategory: store.subCategory,
-      testType: store.testType,
-      testDuration: duration ?? 0,
-      wpm: result.wpm,
-      rawWpm: result.rawWpm,
-      accuracy: result.accuracy,
-      mistakes: result.mistakes,
-      correctChars: result.correctChars,
-      incorrectChars: result.incorrectChars,
-      totalChars: result.totalChars,
-      wordsTyped: result.wordsTyped,
-      duration: result.duration,
-      completed: result.completed,
-      timestamp: Date.now(),
-      charHistory: result.charHistory,
-    };
-    addSession(session);
+  function calculateCurrentWpm(): number {
+    if (!store.startTime || store.totalChars === 0) return 0;
+    const elapsed = (Date.now() - store.startTime) / 1000 / 60;
+    if (elapsed <= 0) return 0;
+    return Math.round((store.totalChars / 5) / elapsed);
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
+      {/* Stats Bar */}
       <StatsBar
-        wpm={calculateCurrentWpm(store)}
+        wpm={calculateCurrentWpm()}
         accuracy={store.totalChars > 0 ? Math.round((store.correctChars / store.totalChars) * 100) : 100}
         mistakes={store.mistakes}
         totalChars={store.totalChars}
@@ -147,15 +160,15 @@ export function TypingEngine({ passage }: TypingEngineProps) {
         status={store.status}
       />
 
-      <Card className="relative overflow-hidden">
+      {/* Typing Area */}
+      <motion.div layout className="relative">
         <div
           ref={containerRef}
           tabIndex={0}
-          className="relative focus:outline-none cursor-text"
-          onClick={() => { setIsFocused(true); if (store.status === "idle") startTest(); }}
+          onClick={() => { if (containerRef.current) containerRef.current.focus(); }}
+          className="relative focus:outline-none cursor-text p-6 rounded-2xl border border-[var(--ct-border)] bg-[var(--ct-card)]/60 backdrop-blur-sm min-h-[120px]"
         >
-          {/* Passage display */}
-          <div className="relative font-mono text-lg leading-relaxed select-none">
+          <div className="relative font-mono text-xl leading-relaxed select-none">
             {store.passage.split("").map((char, i) => {
               const typed = store.typedChars[i];
               let color = "var(--ct-sub)";
@@ -166,15 +179,11 @@ export function TypingEngine({ passage }: TypingEngineProps) {
               }
 
               return (
-                <span
-                  key={i}
-                  className="relative"
-                  style={{ color }}
-                >
+                <span key={i} className="relative transition-colors duration-50" style={{ color }}>
                   {char === " " ? "\u00A0" : char}
                   {i === store.currentCharIndex && (
                     <span
-                      className="absolute inset-y-0 left-0 w-[2px] animate-pulse"
+                      className="absolute inset-y-0 left-0 w-[2.5px] caret-blink"
                       style={{ backgroundColor: "var(--ct-caret)" }}
                     />
                   )}
@@ -183,39 +192,48 @@ export function TypingEngine({ passage }: TypingEngineProps) {
             })}
           </div>
         </div>
-      </Card>
+      </motion.div>
 
+      {/* Controls */}
       <div className="flex items-center justify-center gap-3">
-        {store.status === "finished" ? (
-          <Button onClick={startTest}>Restart Test</Button>
-        ) : store.status === "idle" ? (
-          <Button onClick={startTest}>Start Typing</Button>
-        ) : store.status === "active" ? (
-          <Button variant="secondary" onClick={() => { store.setStatus("paused"); }}>
-            Pause
+        {isFinished ? (
+          <>
+            <Button onClick={startTest}>
+              <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Try Again
+            </Button>
+            <Button variant="secondary" onClick={onNewPassage}>
+              New Text
+            </Button>
+          </>
+        ) : isIdle ? (
+          <Button onClick={startTest} size="lg" className="px-10">
+            Start Typing
           </Button>
         ) : store.status === "paused" ? (
-          <Button onClick={() => { store.setStatus("active"); }}>
+          <Button onClick={() => store.setStatus("active")}>
             Resume
           </Button>
-        ) : null}
+        ) : (
+          <Button variant="secondary" onClick={() => store.setStatus("paused")}>
+            Pause
+          </Button>
+        )}
       </div>
 
+      {/* Keyboard Visualizer */}
       <KeyboardVisualizer pressedKey={pressedKey} />
 
-      <Results
-        result={engineResult}
-        isOpen={store.status === "finished"}
-        onClose={() => {}}
-        onRestart={startTest}
-      />
+      {/* Inline Results */}
+      {isFinished && engineResult && (
+        <Results
+          result={engineResult}
+          onRestart={startTest}
+          onNewText={onNewPassage}
+        />
+      )}
     </div>
   );
-}
-
-function calculateCurrentWpm(store: any): number {
-  if (!store.startTime || store.totalChars === 0) return 0;
-  const elapsed = (Date.now() - store.startTime) / 1000 / 60;
-  if (elapsed <= 0) return 0;
-  return Math.round((store.totalChars / 5) / elapsed);
 }

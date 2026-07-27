@@ -14,7 +14,6 @@ import { KeyboardVisualizer } from "./KeyboardVisualizer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { TestTypeSelector } from "./TestTypeSelector";
-import { SubCategorySelector } from "./SubCategorySelector";
 import { getTimeFromTestType, generateId } from "@/lib/utils";
 import { getRandomPassage } from "@/content/index";
 import { careers } from "@/data/careers";
@@ -62,6 +61,15 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
     }
   }, [screen]);
 
+  // Cleanup countdown timer on unmount
+  useEffect(() => {
+    return () => {
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
+      }
+    };
+  }, []);
+
   // Generate a fresh passage
   const generatePassage = useCallback(() => {
     const p = getRandomPassage(careerId, subId);
@@ -93,6 +101,29 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
     }, 1000);
   }, [generatePassage, store]);
 
+  const saveSession = useCallback((result: any) => {
+    const session: TypingSession = {
+      id: generateId(),
+      career: careerId,
+      subCategory: subId,
+      testType: testType as any,
+      testDuration: duration ?? 0,
+      wpm: result.wpm,
+      rawWpm: result.rawWpm,
+      accuracy: result.accuracy,
+      mistakes: result.mistakes,
+      correctChars: result.correctChars,
+      incorrectChars: result.incorrectChars,
+      totalChars: result.totalChars,
+      wordsTyped: result.wordsTyped,
+      duration: result.duration,
+      completed: result.completed,
+      timestamp: Date.now(),
+      charHistory: result.charHistory,
+    };
+    addSession(session);
+  }, [careerId, subId, testType, duration, addSession]);
+
   const onTimeUp = useCallback(() => {
     timeUpRef.current = true;
     if (engineRef.current) {
@@ -103,7 +134,7 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
       saveSession(result);
       setScreen("results");
     }
-  }, []);
+  }, [store, saveSession]);
 
   const { timeLeft } = useTimer({
     duration: duration ?? null,
@@ -113,7 +144,7 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
 
   const handleChar = useCallback(
     (char: string) => {
-      if (screen !== "typing" || !engineRef.current) return;
+      if (screen !== "typing" || !engineRef.current || timeUpRef.current) return;
 
       const result = engineRef.current.handleChar(char);
       store.setChar(result.charSnapshot.char, result.charSnapshot.char, result.correct, Date.now());
@@ -127,7 +158,7 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
         setScreen("results");
       }
     },
-    [screen, store]
+    [screen, store, saveSession]
   );
 
   const handleBackspace = useCallback(() => {
@@ -166,29 +197,6 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
     store.setStatus("active");
     setScreen("typing");
   }, [store]);
-
-  function saveSession(result: any) {
-    const session: TypingSession = {
-      id: generateId(),
-      career: careerId,
-      subCategory: subId,
-      testType: testType as any,
-      testDuration: duration ?? 0,
-      wpm: result.wpm,
-      rawWpm: result.rawWpm,
-      accuracy: result.accuracy,
-      mistakes: result.mistakes,
-      correctChars: result.correctChars,
-      incorrectChars: result.incorrectChars,
-      totalChars: result.totalChars,
-      wordsTyped: result.wordsTyped,
-      duration: result.duration,
-      completed: result.completed,
-      timestamp: Date.now(),
-      charHistory: result.charHistory,
-    };
-    addSession(session);
-  }
 
   function calculateCurrentWpm(): number {
     if (!store.startTime || store.totalChars === 0) return 0;
@@ -369,9 +377,8 @@ export function TypingOverlay({ isOpen, onClose, initialCareer }: TypingOverlayP
             {screen === "results" && engineResult && (
               <Results
                 result={engineResult}
-                isOpen={true}
-                onClose={handleClose}
                 onRestart={handleRestart}
+                onNewText={handleClose}
               />
             )}
           </motion.div>

@@ -25,10 +25,6 @@ const faqs = [
     a: "All your data is stored locally in your browser using IndexedDB. Nothing is sent to any server. You can reset your data any time in Settings.",
   },
   {
-    q: "Can I race with friends?",
-    a: "Yes. You can create private rooms and share invite links to race with up to 10 friends in real-time.",
-  },
-  {
     q: "Can I get a certificate?",
     a: "Yes, verified certificates are available after creating a free account. They include your name, WPM, accuracy, and a QR code for verification.",
   },

@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { LandingPage } from "@/components/landing/LandingPage";
+import { HomePage } from "@/components/typing/HomePage";
 
 export default function Home() {
-  return <LandingPage />;
+  return <HomePage />;
 }

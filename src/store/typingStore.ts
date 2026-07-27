@@ -95,8 +95,6 @@ export const useTypingStore = create<TypingStoreState>((set) => ({
     set({
       ...initialState,
       passage: "",
-      testType: "60s",
-      testDuration: 60,
       countdownValue: 0,
     }),
 }));
